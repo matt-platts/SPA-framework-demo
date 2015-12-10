@@ -1,9 +1,6 @@
 /**
  * Class: rdc 
- * You can choose to register the object beforehand, otherwise it will be initialised upon the first call of a container.
- * Notes:
- *  - no action params yet
- *  - no multi object support yet
+ * Meta: Either register the object beforehand, otherwise it will be initialised upon the first call of a container.
  */
 
 rdc = {

@@ -15,32 +15,32 @@ var hideSectionDuringPageCalls = ["footer", "pre_footer"];
 cachingOnOff = true;
 minifiedJS = false;
 if(minifiedJS){
-    minifiedDir="production/";
+	minifiedDir="production/";
 } else{
-    minifiedDir="";
+	minifiedDir="";
 }
 
 //LOAD REGISTERS
 pageRegister = new Object();
 $.ajax({
-    url: 'templates/register/pages.json',
-    type: 'GET',
-    async: false,
-    dataType: 'json',
-    success: function(data){
-        pageRegister = data;
-    }
+	url: 'templates/register/pages.json',
+	type: 'GET',
+	async: false,
+	dataType: 'json',
+	success: function(data){
+		pageRegister = data;
+	}
 });
 
 blockRegister = new Object();
 $.ajax({
-    url: 'templates/register/blocks.json',
-    type: 'GET',
-    async: false,
-    dataType: 'json',
-    success: function(data){
-        blockRegister = data;
-    }
+	url: 'templates/register/blocks.json',
+	type: 'GET',
+	async: false,
+	dataType: 'json',
+	success: function(data){
+		blockRegister = data;
+	}
 });
 
 // Set up vars for makePageCalls
@@ -69,31 +69,28 @@ if (navigator.userAgent.match(mobileDevices) || windowWidth<640){
 var resetToken = null;
 var resetUser = null;
 if (location.search){
-    queryString=(location.search.replace("?",""));
-    queryArray=queryString.split("&");
-    for (i=0;i<queryArray.length;i++){
-        queryPair=queryArray[i].split("=");
-        if (queryPair[0]=="user"){
-            resetUser=queryPair[1];
-        } else if (queryPair[0]=="token"){
-            resetToken=queryPair[1];
-        }
-    }
+	queryString=(location.search.replace("?",""));
+	queryArray=queryString.split("&");
+	for (i=0;i<queryArray.length;i++){
+		queryPair=queryArray[i].split("=");
+		if (queryPair[0]=="user"){
+		    resetUser=queryPair[1];
+		} else if (queryPair[0]=="token"){
+		    resetToken=queryPair[1];
+		}
+	}
 }
-
 
 //INIT
 var hash;
 var referral =  window.location.hash.match(/ref_[\w]{2,4}_[\d]+_[a-zA-Z]{2}/) ? window.location.hash : null;
 
-
 if(!!referral){
-    createCookie('referralLink',referral.substr(1),30);
-    window.location.href= '/referrals';
+	createCookie('referralLink',referral.substr(1),30);
+	window.location.href= '/referrals';
 }
 
 hash = window.location.hash.substring(1).split("_");
-
 
 
 /* The original way of getting query strings from the url was to split the url after the hash at the underscore.
@@ -101,7 +98,7 @@ hash = window.location.hash.substring(1).split("_");
 
 var preventHashChange=0;
 if (hash[0]=="password" && resetUser && resetToken){
-    preventHashChange=1;
+	preventHashChange=1;
 }
 
 //Render default page - login
@@ -143,40 +140,42 @@ if (typeof(hash[0]) != "undefined" && hash[0] != "" && hash[0] != "login" && has
 	isLoggedInRedirect();
 
 } else {
+
 	makePageCalls(_loginPage);
+
 }
 
 /* This code below is about removing url paramaters (the type wwhich are separated by underscores) once the framework has gotten hold of the value */
-$(window).bind('hashchange', function() {
-    if(pageCallInOp != true && !preventHashChange){
-        hash = window.location.hash.substring(1).split("_");
-        if (typeof(hash[0]) == "undefined" || hash[0]=="login") {
-		alert("Calling isLoggedInRedir at 2");
-		isLoggedInRedirect();
-        } else {
-            if(hash.length<2) {
-                hash[1]="$$_current_$$";
-            }
-            viewingAsId = hash[1];
+$(window).bind('hashchange', function(){
+	if(pageCallInOp != true && !preventHashChange){
+		hash = window.location.hash.substring(1).split("_");
+		if (typeof(hash[0]) == "undefined" || hash[0]=="login") {
+			alert("Calling isLoggedInRedir at 2");
+			isLoggedInRedirect();
+		} else {
 
-            userType=getUserTypes();
+			if(hash.length<2) {
+				hash[1]="$$_current_$$";
+			}
 
-            var allowedAccess = false;
-            for (var i = 0; i < userType.length; i++) {
-                if($.inArray(userType[i], pageRegister[hash[0]].allowedUserTypes) != -1){
-                    makePageCalls(hash[0]);
-                    allowedAccess = true;
-                    break;
-                }
-            }
-            if(!allowedAccess) {
-                viewingAsId = currentUserVar;
-                if (window.location.hostname.match(/cuser/)){
-                    top.location="/#login"; // by not doing make page calls we force a redirect if the user is signed up
-                } else {
-                    top.location="#login"; // by not doing make page calls we force a redirect if the user is signed up
-                }
-            }
-        }
-    }
+			viewingAsId = hash[1];
+			userType=getUserTypes();
+			var allowedAccess = false;
+			for (var i = 0; i < userType.length; i++) {
+				if($.inArray(userType[i], pageRegister[hash[0]].allowedUserTypes) != -1){
+					makePageCalls(hash[0]);
+					allowedAccess = true;
+					break;
+				}
+			}
+			if(!allowedAccess) {
+				viewingAsId = currentUserVar;
+				if (window.location.hostname.match(/cuser/)){
+					top.location="/#login"; // by not doing make page calls we force a redirect if the user is signed up
+				} else {
+					top.location="#login"; // by not doing make page calls we force a redirect if the user is signed up
+				}
+			}
+		}
+	}
 });

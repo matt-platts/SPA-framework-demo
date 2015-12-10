@@ -1,6 +1,6 @@
 /**
- * Registry of rd categories, 
- */
+ * Registry of remote data categories, 
+*/
 
 rdc.registry =
 {
