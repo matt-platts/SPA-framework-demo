@@ -681,7 +681,8 @@ page.prototype.layoutRender = function(layoutIdentifier) {
 	$(("#" + _view_container)).show();
 }
 
-/* Function: getParameterByName
+/* 
+ * Function: getParameterByName
  * Params: name
 */
 function getParameterByName(name) {
@@ -689,108 +690,6 @@ function getParameterByName(name) {
 	return match && decodeURIComponent(match[1].replace(/\+/g, ' '));
 }
 
-/*
- * Function : isLoggedInRedirect
- * If the user is already logged in when the login page is called, this function is called to redirect the user to where they should be..
- */
-function isLoggedInRedirect(){
-	alert("Landed on isLoggedInRedirect");
-	// GET USER TYPE FOR REDIRECT
-	$.ajax({
-		url: apiPath + 'user/details/'+ currentUserVar,
-		async: false,
-		data: {
-			"type" : "basic",
-			"debug" : "true2"
-		},
-		type: 'GET',
-		dataType: 'json',
-		statusCode:{
-			200: function(data, textStatus, XMLHttpRequest) {
-				createCookie("UserId",data["user"]["userId"],2);
-				if(data["user"]["userType"]["CHILD"] == true) {
-					viewingAsId = currentUserVar;
-				    	if(data["user"]["status"]=="PENDING") {
-						makePageCalls("childFirstSecurity");
-					} else {
-						makePageCalls("childSummary");
-					}
-				};
-				if(data["user"]["userType"]["RELATIVE"] == true && data["user"]["userType"]["PARENT"] == false) {
-					viewingAsId = currentUserVar;
-					makePageCalls("relativeSummary");
-				};
-				if(data["user"]["userType"]["PARENT"] == true) {
-					if (data["user"].joinFormStatus=="YOUR_CHILDREN"){
-						makePageCallsMobile("signupTwo", "signupTwoM");
-					} else if (data["user"].joinFormStatus=="YOUR_SECURITY"){
-					      makePageCallsMobile("signupConfirmID", "signupConfirmIDM");
-					} else if (data["user"].joinFormStatus=="FUND_ACCOUNT"){
-
-						joinFromDataArray=Array;
-						joinFromDataArray["userId"]=this.currentPageData.getUser["userId"];
-						joinFromDataArray["joinFormStatus"]=3;
-
-						$.ajax({
-							url: apiPath + 'user/user/api-update-join-form-status',
-							data: joinFromDataArray,
-							type: 'POST',
-							success: function ( joinFromData) {
-							}
-						});
-
-						makePageCallsMobile("signupConfirmID", "signupConfirmIDM");
-					} else {
-						makePageCalls("home");
-					}
-				};
-
-			},
-			401: function() {
-				alert("401ing - redir");
-				makePageCalls(_loginPage);
-			}
-		}
-	});
-};
-
-/* 
- * Function: getUserTypes()
- * Returns: array of user types applicable to the current user - (CHILD,PARENT,RELATIVE)
- * 	    Note that most users will be only one type, but you can be a parent AND a relative
-*/
-function getUserTypes() {
-	userTypes = new Array("all");
-	$.ajax({
-		url: apiPath + 'user/details/'+ currentUserVar,
-		async: false,
-		data: {
-			"type" : "basic",
-			"debug" : "true"
-		},
-		type: 'GET',
-		dataType: 'json',
-		statusCode:{
-		    200: function(data, textStatus, XMLHttpRequest) {
-			if(data["user"]["userType"]["CHILD"] == true) {
-			    userTypes.push("child");
-			};
-			if(data["user"]["userType"]["RELATIVE"] == true) {
-			    userTypes.push("relative");
-			};
-			if(data["user"]["userType"]["PARENT"] == true) {
-			    userTypes.push("parent");
-			};
-		    },
-		    401: function() {
-		       //if( window.location.hash != "#password" ){
-			   userTypes.push("external");
-		       //}
-		    }
-		}
-	});
-    return userTypes;
-}
 
 /* 
  *Function: attachJavaScriptFileInitial

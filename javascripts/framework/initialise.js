@@ -1,11 +1,12 @@
 // User editable configuration 
-var apiPath = "http://www.mattplatts.com/demo/js-framework-api/";
+var apiPath = "https://www.mattplatts.com/demo/js-framework-api/";
 var loadStyle = 1; // 1 - As sections become ready, 2 - In order of listing in pageRegister, 3 - All at once
 var currentUserVar = "$$_current_$$";
 var _homePage = "home";
 var _loginPage = "login";
 var _view_container = "view-container" // id of div which contains the entire view
-var homeURL = "http://www.mattplatts.com/demo/js-framework/";
+var homeURL = "https://www.mattplatts.com/demo/js-framework/";
+var _user = new user;
 
 // when reloading areas of the page, good to hide things like footers so they don't appear to spring up the screen and down again as the middle section loads..
 var hideSectionDuringLoad = ["mainRightAlt", "mainLeftAlt", "computer-image", "mainInner", "top_text", "progress_bar", "footer", "pre_footer"];
@@ -20,7 +21,7 @@ if(minifiedJS){
 	minifiedDir="";
 }
 
-//LOAD REGISTERS
+// Load Json files descrigin each page and page block, with associated api calls, js, stylesheets and auth for each`
 pageRegister = new Object();
 $.ajax({
 	url: 'templates/register/pages.json',
@@ -43,7 +44,7 @@ $.ajax({
 	}
 });
 
-// Set up vars for makePageCalls
+// Set up vars for makePageCalls - should be able to delete this with a little tweaking as it's in the object
 var currentPage=new Object();
 var updateTimers = new Object();
 var pageCallInOp=false;
@@ -65,7 +66,7 @@ if (navigator.userAgent.match(mobileDevices) || windowWidth<640){
     is_mobile=1;
 }
 
-// READ REQUEST VARIABLES (FOR PASSWORD RESET)
+// Read request vars - required for password reset 
 var resetToken = null;
 var resetUser = null;
 if (location.search){
@@ -81,7 +82,7 @@ if (location.search){
 	}
 }
 
-//INIT
+// Init
 var hash;
 var referral =  window.location.hash.match(/ref_[\w]{2,4}_[\d]+_[a-zA-Z]{2}/) ? window.location.hash : null;
 
@@ -91,7 +92,6 @@ if(!!referral){
 }
 
 hash = window.location.hash.substring(1).split("_");
-
 
 /* The original way of getting query strings from the url was to split the url after the hash at the underscore.
  * This does not allow any url paramaters to contain underscores however. This is basically legacy code but some parts of the system still use it */
@@ -104,7 +104,7 @@ if (hash[0]=="password" && resetUser && resetToken){
 //Render default page - login
 if (typeof(hash[0]) != "undefined" && hash[0] != "" && hash[0] != "login" && hash[0] != "undefined") {
 
-	userType=getUserTypes();
+	userType=_user.getUserTypes();
 	var allowedAccess = false;
 	if (pageRegister[hash[0]] == undefined){
 		alert("Default page");
@@ -136,8 +136,8 @@ if (typeof(hash[0]) != "undefined" && hash[0] != "" && hash[0] != "login" && has
 
 } else if (hash[0] != "login") {
 
-	alert("Calling isLoggedInRedir at 1");
-	isLoggedInRedirect();
+	alert("Calling checkLoginAndDirect at 1");
+	_user.checkLoginAndDirect();
 
 } else {
 
@@ -150,8 +150,8 @@ $(window).bind('hashchange', function(){
 	if(pageCallInOp != true && !preventHashChange){
 		hash = window.location.hash.substring(1).split("_");
 		if (typeof(hash[0]) == "undefined" || hash[0]=="login") {
-			alert("Calling isLoggedInRedir at 2");
-			isLoggedInRedirect();
+			alert("Calling checkLoginAndDirect at 3");
+			checkLoginAndDirect();
 		} else {
 
 			if(hash.length<2) {
@@ -159,7 +159,7 @@ $(window).bind('hashchange', function(){
 			}
 
 			viewingAsId = hash[1];
-			userType=getUserTypes();
+			userType=_user.getUserTypes();
 			var allowedAccess = false;
 			for (var i = 0; i < userType.length; i++) {
 				if($.inArray(userType[i], pageRegister[hash[0]].allowedUserTypes) != -1){

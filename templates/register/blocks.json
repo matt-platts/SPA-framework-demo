@@ -210,6 +210,32 @@
             "getAdult" : {"URL" : "user/adult/"},
             "getJunior" : {"URL" : "user/junior/", "data" : {"id" : "%%viewingAsId%%"}}
         }
+    },
+    "page2" : {
+        "file" : {"address" : "main"}
+    },
+    "page3" : {
+        "file" : {"address" : "main"}
+    },
+    "page4" : {
+        "file" : {"address" : "main"}
+    },
+    "page5" : {
+        "file" : {"address" : "main"},
+        "AJAXcalls" : {
+		"getPage5" : {"URL" : "page5/data/", "data" : {"type" : "basic"}}
+	}
+    },
+    "appRules": {
+        "file" : {"address": "main/parent"},
+        "AJAXcalls" : {
+            "getUser" : {"URL" : "user/details/%%viewingAsId%%", "data" : {"type" : "basic"}},
+            "getChildren" : {"URL" : "user/details/", "data" : {"childrenOf" : "$$_current_$$"}},
+            "getAllPktmny" : {"URL" : "mny/pktmny"},
+            "getAllCards" : {"URL" : "mny/card"},
+            "getAllLimits" : {"URL" : "mny/limits"}
+        },
+        "javascriptURL" : "appRules.js"
     }
 
 }

@@ -20,6 +20,7 @@
             }
         },
         "replacementStyleSheets" : "skin/main/stylesheets/webapp.css",
+        "additionalStyleSheets" : "skin/main/stylesheets/homepage.css",
         "allowedUserTypes" : ["external"]
     },
 
@@ -88,7 +89,7 @@
                 "noMenu" : "header"
             },
             "mainContent" : {
-                "appRules" : "main/parent"
+                "page2" : "main"
             },
             "footer" : {
                 "webappFooter": "main/shared"
@@ -115,7 +116,7 @@
                 "noMenu" : "header"
             },
             "mainContent" : {
-                "appRules" : "main/parent"
+                "page3" : "main"
             },
             "footer" : {
                 "webappFooter": "main/shared"
@@ -169,7 +170,7 @@
                 "noMenu" : "header"
             },
             "mainContent" : {
-                "appRules" : "main/parent"
+                "page5" : "main"
             },
             "footer" : {
                 "webappFooter": "main/shared"
